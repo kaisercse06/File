@@ -1,0 +1,137 @@
+old charter set WE8ISO8859P1
+-----------------------------
+
+SQL> conn /as sysdba
+Connected.
+SQL>
+SQL>
+SQL> SHUTDOWN IMMEDIATE;
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+SQL> STARTUP RESTRICT;
+ORACLE instance started.
+
+Total System Global Area  778387456 bytes
+Fixed Size                  1374808 bytes
+Variable Size             402654632 bytes
+Database Buffers          369098752 bytes
+Redo Buffers                5259264 bytes
+Database mounted.
+Database opened.
+
+SQL> ALTER DATABASE CHARACTER SET AL32UTF8;
+
+Database altered.
+
+SQL> SHUTDOWN IMMEDIATE;
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+SQL> STARTUP;
+ORACLE instance started.
+
+Total System Global Area  778387456 bytes
+Fixed Size                  1374808 bytes
+Variable Size             402654632 bytes
+Database Buffers          369098752 bytes
+Redo Buffers                5259264 bytes
+Database mounted.
+Database opened.
+
+
+--------------------------- secode-part
+
+SQL> SHUTDOWN IMMEDIATE .
+SQL> STARTUP MOUNT;
+SQL> ALTER SYSTEM ENABLE RESTRICTED SESSION;
+SQL> ALTER DATABASE OPEN;
+SQL> ALTER DATABASE CHARACTER SET AL32UTF8;--if fail this command just use internal_use
+
+in case of failure of this command
+
+SQL>Alter database character set INTERNAL_USE AL32UTF8;
+SQL> SHUTDOWN IMMEDIATE;
+SQL> STARTUP MOUNT ;
+SQL> ALTER SYSTEM DISABLE RESTRICTED SESSION;
+SQL>ALTER DATABASE OPEN;
+
+SQL > select * from nls_database_parameters ORDER BY PARAMETER;
+
+
+
+Practical Solution :
+
+SQL> SHUTDOWN IMMEDIATE
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+SQL> STARTUP MOUNT;
+ORACLE instance started.
+
+Total System Global Area  763363328 bytes
+Fixed Size                  2929064 bytes
+Variable Size             528485976 bytes
+Database Buffers          226492416 bytes
+Redo Buffers                5455872 bytes
+Database mounted.
+SQL> ALTER SYSTEM ENABLE RESTRICTED SESSION;
+
+System altered.
+
+SQL> ALTER DATABASE OPEN;
+
+Database altered.
+
+SQL> ALTER DATABASE CHARACTER SET AL32UTF8;
+ALTER DATABASE CHARACTER SET AL32UTF8
+*
+ERROR at line 1:
+ORA-12712: new character set must be a superset of old character set
+
+
+SQL> Alter database character set INTERNAL_USE AL32UTF8;
+
+Database altered.
+
+SQL> SHUTDOWN IMMEDIATE;
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+SQL> STARTUP MOUNT ;
+ORACLE instance started.
+
+Total System Global Area  763363328 bytes
+Fixed Size                  2929064 bytes
+Variable Size             528485976 bytes
+Database Buffers          226492416 bytes
+Redo Buffers                5455872 bytes
+Database mounted.
+SQL> ALTER SYSTEM DISABLE RESTRICTED SESSION;
+ALTER SYSTEM DISABLE RESTRICTED SESSION
+
+ERROR at line 1:
+ORA-00604: error occurred at recursive SQL level 1
+ORA-01219: database or pluggable database not open: queries allowed on fixed
+tables or views only
+
+
+SQL> alter database disable restricted session;
+alter database disable restricted session
+
+ERROR at line 1:
+ORA-00933: SQL command not properly ended
+
+
+SQL> alter system disable restricted session;
+alter system disable restricted session
+*
+ERROR at line 1:
+ORA-00604: error occurred at recursive SQL level 1
+ORA-01219: database or pluggable database not open: queries allowed on fixed
+tables or views only
+
+
+SQL> alter database open;
+
+Database altered.

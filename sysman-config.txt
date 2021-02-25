@@ -1,0 +1,10 @@
+alter user sysman account unlock;
+
+
+alter user sysman identified by power;
+
+
+select username,account_status from dba_users where username ='SYSMAN'
+
+
+select username,account_status from dba_users where username ='DBSNMP'

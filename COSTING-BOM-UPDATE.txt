@@ -1,0 +1,62 @@
+
+
+UPDATE GR_ORDERDISTPO p
+   SET po_qty =
+           (SELECT SIZE_TOTAL
+              FROM GR_ORDERSIZEDTL
+             WHERE ORDERSIZEDTL_NO = p.ORDERSIZEDTL_NO)
+
+ WHERE ORDERBUDGETDTL_NO IN
+           (SELECT ORDERBUDGETDTL_NO
+              FROM gr_orderbudget b, gr_orderbudgetdtl d
+             WHERE     b.ORDERBUDGET_NO = d.ORDERBUDGET_NO
+                   AND budget_sl = 'C20110007')
+                   and po_qty is null 
+                   
+                   
+                   
+                   
+                   exec p_ORDERDISTPO (2527)
+                   
+                  
+
+---------------------------------------
+select *from GR_ORDERBUDGET
+where ORDERBUDGET_NO= 2514
+
+CREATE TABLE DATA3
+AS
+    SELECT *
+      FROM GR_ORDERBUDGETDTL D
+     WHERE     ORDERBUDGET_NO = 2514
+           AND ORDERBUDGETDTL_NO NOT IN
+                   (SELECT ORDERBUDGETDTL_NO
+                      FROM GR_ORDERFAB
+                     WHERE ORDERBUDGETDTL_NO = D.ORDERBUDGETDTL_NO
+                    UNION ALL
+                    SELECT ORDERBUDGETDTL_NO
+                      FROM GR_ORDERACC
+                     WHERE ORDERBUDGETDTL_NO = D.ORDERBUDGETDTL_NO)
+                     
+               
+
+      
+                     
+      insert into GR_ORDERBUDGETDTL select *from  DATA3;
+
+
+
+
+   EXEC p_ORDERDISTPO (2514);
+
+
+  
+
+
+
+ UPDATE GR_ORDERACC
+   SET APPROVE_FLAG = 1, APPROVE_DATE = SYSDATE, APPROVE_BY = 190195044205
+ WHERE     ORDERBUDGETDTL_NO IN (SELECT ORDERBUDGETDTL_NO
+                                   FROM GR_ORDERBUDGETDTL D
+                                  WHERE ORDERBUDGET_NO = 2514)
+       AND APPROVE_BY IS NULL

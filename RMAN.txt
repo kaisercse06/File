@@ -1,0 +1,1 @@
+CONFIGURE CHANNEL DEVICE TYPE DISK FORMAT 'D:\Oracle\app\DataMatrix\flash_recovery_area/ora_df%t_s%s_s%p';﻿

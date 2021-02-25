@@ -1,0 +1,3 @@
+Device Model:
+IClock 580
+ZKT

@@ -1,0 +1,89 @@
+/* Formatted on 11/1/2020 10:56:27 AM (QP5 v5.326) */
+SELECT PROD_DATE,
+       d.prod_qty,
+       s.PROD_QTY,
+       BATCH_NAME,
+       s.SEWINGDTL_NO,
+       hour_no
+  FROM GR_SEWINGDTL  d,
+       gr_prodbatch  b,
+       GR_SEWING     ss,
+       (  SELECT SUM (PROD_QTY) PROD_QTY, SEWINGDTL_NO
+            FROM GR_SEWINGSIZEDTL
+        GROUP BY SEWINGDTL_NO) s
+ WHERE     d.SEWINGDTL_NO = s.SEWINGDTL_NO
+       AND NVL (d.PROD_QTY, 0) <> NVL (s.PROD_QTY, 0)
+       AND ss.SEWING_NO = d.SEWING_NO
+       AND b.PRODBATCH_NO = ss.PRODBATCH_NO
+
+
+
+
+
+
+
+
+------------------------------------------------------------
+
+
+
+
+  SELECT t1.ORDER_NO,
+         t1.GMT_SIZE,
+         OS.ORDER_SL,
+         OS.ORDERSIZE_NO,
+         SUM (t1.size_qty)
+             size_qty,
+         SUM (t1.input_qty)
+             input_qty,
+         SUM (t1.pre_sewing_qty)
+             pre_sewing_qty,
+         SUM (NVL (t1.input_qty, 0)) - SUM (NVL (t1.pre_sewing_qty, 0))
+             balance,
+             line_no
+    FROM (SELECT SZ.ORDER_NO,
+                 sz.GMT_SIZE,
+                 sz.qty     size_qty,
+                 0          input_qty,
+                 0          pre_sewing_qty,
+                 0 line_no
+            FROM gr_size_batch_po_color_v sz
+           WHERE     sz.PRODBATCH_NO = 28263
+                 AND sz.ORDERCOLOR_NO = 1150903320
+          UNION ALL
+          SELECT PI.ORDER_NO,
+                 s.gmt_size,
+                 0               size_qty,
+                 S.INPUT_QTY     input_qty,
+                 0               pre_sewing_qty,
+                  PI.LINE_NO
+            FROM GR_LINEINPUT pi, GR_LINEINPUTDTL S
+           WHERE     PI.LINEINPUT_NO = S.LINEINPUT_NO
+                 AND pi.PRODBATCH_NO =28263
+                 AND pi.ORDERCOLOR_NO = 1150903320
+                -- AND PI.LINE_NO = :BLK_LINE.TXT_LINE
+            
+          UNION ALL
+          SELECT i.ORDER_NO,
+                 sz.gmt_size,
+                 0               size_qty,
+                 0               input_qty,
+                 sz.PROD_QTY     pre_sewing_qty,
+                  i.LINE_NO
+            FROM GR_SEWING i, GR_SEWINGDTL s, GR_SEWINGSIZEDTL sz
+           WHERE     i.SEWING_NO = s.SEWING_NO
+                 AND s.SEWINGDTL_NO = sz.SEWINGDTL_NO
+               --  AND I.LINE_NO = :BLK_LINE.TXT_LINE
+                 AND i.PRODBATCH_NO = 28263
+                 AND i.ORDERCOLOR_NO = 1150903320
+               ) t1,
+         GR_ORDERSIZE OS
+   WHERE t1.GMT_SIZE = OS.GMT_SIZE AND t1.ORDER_NO = OS.ORDER_NO
+GROUP BY t1.ORDER_NO,
+         t1.GMT_SIZE,
+         OS.ORDER_SL,
+         OS.ORDERSIZE_NO,
+         LINE_NO
+         
+         
+         	

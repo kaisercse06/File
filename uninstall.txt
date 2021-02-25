@@ -1,0 +1,6 @@
+1.uninstall weblogic control panel
+2.uninstall fussion middleware open oracle universal installer
+3.go to regedit,
+4.start menu
+5.pc restart
+6.delete oracle folder
